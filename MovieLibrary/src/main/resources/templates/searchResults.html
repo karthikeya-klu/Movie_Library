@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e2a78, #273c88);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .navbar {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar .title {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 32px;
+            letter-spacing: 2px;
+        }
+        .navbar .profile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .navbar .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .navbar .profile .profile-name {
+            font-size: 18px;
+        }
+        .navbar .profile .dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            width: 150px;
+        }
+        .navbar .profile .dropdown button {
+            background: none;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .navbar .profile .dropdown button:hover {
+            background: #444;
+        }
+        .movies {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 100px;
+            gap: 20px;
+        }
+        .movie {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .movie img {
+            width: 200px;
+            height: 300px;
+            border-radius: 8px;
+        }
+        .movie-title {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        .movie button {
+            margin-top: 10px;
+            background-color: #ff6b6b;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .movie button:hover {
+            background-color: #ff4b4b;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="title">Movie Library</div>
+        <div class="profile" onclick="toggleDropdown()">
+            <img src="https://via.placeholder.com/40" alt="Profile Image">
+            <div class="profile-name">Username</div>
+            <div class="dropdown">
+                <button onclick="location.href='/home'">Home</button>
+                <button onclick="location.href='/mylists'">My Playlists</button>
+                <button onclick="location.href='/logout'">Sign Out</button>
+            </div>
+        </div>
+    </div>
+    <div class="movies" id="movies">
+        <div th:each="movie : ${movies}" class="movie">
+            <img th:src="${movie.poster}" alt="Movie Poster">
+            <div class="movie-title" th:text="${movie.title}"></div>
+            <!-- Pass the movie ID and list name to the controller when adding to list -->
+            <form action="/addToList" method="post">
+                <input type="hidden" name="email" th:value="${email}">
+                <input type="hidden" name="imdbID" th:value="${movie.imdbID}">
+                <select name="listName" required>
+                    <option th:each="list : ${listName}" th:value="${list.listname}" th:text="${list.listname}"></option>
+                </select>
+                <button type="submit">Add to Your List</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.navbar .profile .dropdown');
+            dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        document.addEventListener('click', function(event) {
+            const profile = document.querySelector('.profile');
+            const dropdown = document.querySelector('.navbar .profile .dropdown');
+            if (!profile.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
